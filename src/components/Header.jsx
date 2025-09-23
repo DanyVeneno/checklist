@@ -1,7 +1,8 @@
 import React from "react";
 import ProgressBar from "./ProgressBar";
+import { Moon, Sun } from 'lucide-react';
 
-const Header = ({ progress, checkedCount, totalItems }) => {
+const Header = ({ progress, checkedCount, totalItems, darkMode, setDarkMode }) => {
   return (
     <div className='bg-white shadow-lg border-b-4 border-red-500'>
       <div className='max-w-4xl mx-auto px-6 py-8'>
@@ -31,6 +32,16 @@ const Header = ({ progress, checkedCount, totalItems }) => {
           checkedCount={checkedCount}
           totalItems={totalItems}
         />
+        <div className="mt-4 text-right">
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-gray-100 dark:bg-gray-700"
+            aria-pressed={darkMode}
+          >
+            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <span className="text-sm text-gray-700 dark:text-gray-200">{darkMode ? 'Claro' : 'Oscuro'}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

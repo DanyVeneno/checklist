@@ -51,3 +51,49 @@ Generado: ${new Date().toLocaleString('es-ES')}
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+export async function exportChecklistPDF(checkedItemsSet, getAllItemsFn, getProgressFn) {
+  // lazy import jspdf
+  const { jsPDF } = await import('jspdf');
+
+  const checkedList = Array.from(checkedItemsSet);
+  const uncheckedList = getAllItemsFn()
+    .map(({ item }) => item)
+    .filter(item => !checkedItemsSet.has(item));
+
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+  const margin = 40;
+  let y = margin;
+
+  doc.setFontSize(18);
+  doc.text('CHECKLIST DE BOTIQUÍN DE PRIMEROS AUXILIOS - GAMA STORE', margin, y);
+  y += 24;
+
+  doc.setFontSize(12);
+  doc.text(`Progreso: ${getProgressFn()}%`, margin, y);
+  y += 20;
+
+  doc.setFontSize(14);
+  doc.text(`ELEMENTOS COMPLETADOS (${checkedList.length}):`, margin, y);
+  y += 18;
+  doc.setFontSize(11);
+  checkedList.forEach(item => {
+    if (y > 720) { doc.addPage(); y = margin; }
+    doc.text(`✓ ${item}`, margin, y);
+    y += 14;
+  });
+
+  y += 10;
+  doc.setFontSize(14);
+  doc.text(`ELEMENTOS PENDIENTES (${uncheckedList.length}):`, margin, y);
+  y += 18;
+  doc.setFontSize(11);
+  uncheckedList.forEach(item => {
+    if (y > 720) { doc.addPage(); y = margin; }
+    doc.text(`○ ${item}`, margin, y);
+    y += 14;
+  });
+
+  const fileName = `botiquin-checklist-${new Date().getTime()}.pdf`;
+  doc.save(fileName);
+}

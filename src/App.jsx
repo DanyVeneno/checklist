@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { categories, getAllItems } from "./data/categories";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { exportChecklist } from "./utils/exportUtils";
@@ -15,6 +15,7 @@ const FirstAidKitApp = () => {
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [darkMode, setDarkMode] = useLocalStorage('darkMode', false);
 
   const allItems = useMemo(() => getAllItems(), []);
   const totalItems = allItems.length;
@@ -52,6 +53,18 @@ const FirstAidKitApp = () => {
     exportChecklist(checkedItems, getAllItems, getProgress);
   };
 
+  const handleExportPDF = () => {
+    // dynamic import to keep bundle small
+    import('./utils/exportUtils').then(mod => {
+      if (mod.exportChecklistPDF) mod.exportChecklistPDF(checkedItems, getAllItems, getProgress);
+    });
+  };
+
+  useEffect(() => {
+    if (darkMode) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  }, [darkMode]);
+
   const progress = getProgress();
 
   return (
@@ -60,6 +73,8 @@ const FirstAidKitApp = () => {
         progress={progress}
         checkedCount={checkedItems.size}
         totalItems={totalItems}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
       />
 
       <div className='max-w-4xl mx-auto px-6 py-6'>
@@ -73,6 +88,7 @@ const FirstAidKitApp = () => {
             categories={categories}
             onReset={resetChecklist}
             onExport={handleExport}
+            onExportPDF={handleExportPDF}
           />
         </div>
 

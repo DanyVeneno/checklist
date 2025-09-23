@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function SearchControls({ searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, categories, onReset, onExport }) {
+export default function SearchControls({ searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, categories, onReset, onExport, onExportPDF }) {
   return (
     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
       <div className="relative flex-1 max-w-md">
@@ -35,7 +35,13 @@ export default function SearchControls({ searchTerm, setSearchTerm, selectedCate
           onClick={onExport}
           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
         >
-          Exportar
+          Exportar txt
+        </button>
+        <button
+          onClick={onExportPDF}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          Exportar PDF
         </button>
       </div>
     </div>
